@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ClipboardIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 interface CodeProps {
@@ -10,16 +10,18 @@ interface CodeProps {
 
 export default function CopyBlock(props: CodeProps) {
   const [copied, setCopied] = useState(false);
+  const codeRef = useRef<HTMLElement>(null);
 
   function handleCopy() {
-    navigator.clipboard.writeText(props.children);
+    const codeText = codeRef.current?.textContent ?? '';
+    navigator.clipboard.writeText(codeText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return props['data-language'] ? (
     <div className="relative group">
-      <code>{props.children}</code>
+      <code ref={codeRef}>{props.children}</code>
       <button
         onClick={handleCopy}
         className="hidden group-hover:flex absolute top-0 right-0 px-2 py-1 text-xs bg-gray-800 text-white rounded hover:bg-gray-700 items-center gap-1">
