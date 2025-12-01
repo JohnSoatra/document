@@ -11,3 +11,16 @@
 
   // Render as a React component
   // const MdxComponent = getMDXComponent(code);
+
+---
+interface Props {
+  params: Promise<{ slug: string }>;
+}
+
+function NotFoundFile() {
+  return (
+    <h3 className='text-center text-lg py-6'>
+      Sorry, the requested file could not be found.
+    </h3>
+  );
+}

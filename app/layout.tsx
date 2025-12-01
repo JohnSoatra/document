@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VRef",
-  description: "A Tiny Reactive library to track and respond to changes in variables, providing predictable low-level reactivity.",
+  title: "Libraries",
+  description: "Document of libraries.",
 };
 
 export default function RootLayout({
