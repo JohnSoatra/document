@@ -1,0 +1,190 @@
+<h1 className='font-medium'>VRef — JavaScript library for reactive mutation and change tracking.</h1>
+<div className="flex flex-wrap gap-2">
+  {[
+    '#vref',
+    '#javascript',
+    '#reactivejs',
+    '#reactivity',
+    '#programming',
+    '#webdevelopment',
+    '#opensource',
+    '#frontenddev',
+  ].map((tag) => (
+    <span
+      key={tag}
+      className="font-medium"
+    >
+      {tag}
+    </span>
+  ))}
+</div>
+
+### VRef — A Tiny Library for Safe Mutation and Change Tracking in JavaScript
+
+JavaScript lets us freely mutate objects:
+
+```js
+user.name = "John";
+user.age = 25;
+```
+
+But this doesn't trigger any change detection — unless we use a large framework like React, Vue, MobX, or Immer.
+
+Most existing solutions rely on:  
+❌ Immutable updates (React setState)  
+❌ Deep cloning (performance cost)  
+❌ Heavy reactivity systems (Vue, MobX)  
+❌ Framework-specific abstractions  
+❌ Large bundles just to track simple changes
+
+Sometimes, we just want something:  
+✔ Tiny  
+✔ Framework-agnostic  
+✔ Native mutation  
+✔ Safe and reactive
+
+That’s why I built VRef.
+
+---
+
+## 🔍 What is VRef?
+
+**VRef** is a tiny JavaScript utility that lets you:
+
+✅ Mutate values directly (no immutability, no cloning)  
+🪝 Get notified when changes happen  
+⚡ Works with objects, arrays, Maps, Sets  
+🗑 Safe with Garbage Collection  
+🌍 Works in both browser & Node.js
+
+```bash
+npm install vref
+```
+
+---
+
+## 🚀 Quick Example
+
+```js
+import ref from "vref";
+
+// Create a reactive object with a change tracker
+const { value: user } = ref(
+  // User's initial value
+  { name: "John", age: 25 },
+  // Change event handler
+  (event) => {
+    console.log("Changed:", event);
+  }
+);
+
+user.name = "Doe"; // triggers change event
+user.age = 26; // triggers change event
+```
+
+📌 Key point: You **mutate normally**, but VRef **detects and reports changes**.
+
+---
+
+## 🛠 Why VRef Exists
+
+Most libraries force you to use:
+
+- Immutable patterns
+- Cloning and diffing
+- Framework-specific APIs
+
+But sometimes, you just want to write this:
+
+```js
+cart.items.push({ id: 1, qty: 2 });
+```
+
+And still know **when and what changed** — without deep cloning, proxies everywhere, or big abstractions.
+
+---
+
+## 🏗 How It Works (In Short)
+
+- It wraps your object/array using `Proxy`.
+- Intercepts mutations (`set`, `delete`, `get`).
+- Fires your callback when something changes.
+- Does **not** block normal mutation.
+- Fully GC-safe — no memory leaks.
+
+---
+
+## 🧪 Works with Arrays, Maps, Sets
+
+```js
+const { value: todos } = ref([], (e) => console.log(e));
+
+todos.push("Learn VRef"); // triggers
+todos[0] = "Practice VRef"; // triggers
+```
+
+```js
+const { value: settings } = ref(new Map(), (e) => console.log(e));
+settings.set("theme", "dark"); // triggers
+```
+
+---
+
+## 📦 When to Use VRef?
+
+| Use case                         | Is VRef good? |
+| -------------------------------- | ------------- |
+| Logging object mutations         | ✅ Yes        |
+| Undo/redo or time-travel state   | ✅ Yes        |
+| Form input tracking              | ✅ Yes        |
+| Framework-level state management | ⚠️ Maybe      |
+| Full UI reactivity (React/Vue)   | ⚠️ Maybe      |
+
+---
+
+## ⚖️ Comparison
+
+| Feature         | VRef | MobX | Immer | Vue Reactivity |
+| --------------- | ---- | ---- | ----- | -------------- |
+| Tiny            | ✔️   | ❌   | ❌    | ❌             |
+| Direct mutation | ✔️   | ✔️   | ✔️    | ❌             |
+| Change tracking | ✔️   | ✔️   | ⚠️    | ✔️             |
+| Framework-free  | ✔️   | ❌   | ✔️    | ❌             |
+
+---
+
+## 🌱 Final Thoughts
+
+VRef is not meant to replace state management libraries or frameworks.  
+It’s a **primitive**, lightweight utility for simple, safe, reactive mutation and change tracking — nothing more, nothing less.
+
+🎯 Perfect when you want:
+
+> “I just want to know when something changes — without rewriting my whole app.”
+
+---
+
+### 🎮 Live Playground
+<div align="center">
+**Play with `vref`:**  
+👉 <a href="https://stackblitz.com/edit/react-use-current?file=src/App.tsx" target='_blank'>Open Live Playground</a>
+</div>
+
+---
+
+📦 **Try it here:**  
+🟢 npm: [https://www.npmjs.com/package/vref](https://www.npmjs.com/package/vref) <br/>
+🐙 GitHub: [https://github.com/JohnSoatra/vref](https://github.com/JohnSoatra/vref)
+
+---
+
+💬 **What do you think?**  
+Would you find this useful in reactive state, logging, debugging, undo/redo, or form tracking?  
+I'd love feedback and suggestions!
+
+---
+
+<div align="center">
+📬 **Contact me**
+👉 <a href="https://www.linkedin.com/in/soatra/" target="_blank">LinkedIn – John Soatra</a>
+</div>
