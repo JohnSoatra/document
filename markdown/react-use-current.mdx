@@ -136,7 +136,7 @@ user.address.city = "Phnom Penh";
 
 - `useCurrent()` internally wraps your initial value using **VRef**'s reactive system.
 - Any mutation (`obj.key = value`) triggers VRef's change event.
-- **useCurrent** listens to that event and updates an internal state token, which triggers a React re-render.
+- `useCurrent()` listens to that event and updates an internal state token, which triggers a React re-render.
 - Works deeply — arrays, objects, nested structures.
 
 ---
