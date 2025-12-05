@@ -1,0 +1,292 @@
+<h1 className='font-semibold'>React Use Current — A Tiny React Hook for Synchronous Reactive State</h1>
+<div className="flex flex-wrap gap-2">
+  {[
+    '#react',
+    '#reacthooks',
+    '#reactivejs',
+    '#reactivity',
+    '#vref',
+    '#javascript',
+    '#webdevelopment',
+    '#opensource',
+    '#frontenddev',
+  ].map((tag) => (
+    <span
+      key={tag}
+      className="font-medium"
+    >
+      {tag}
+    </span>
+  ))}
+</div>
+
+---
+
+
+
+## 🚀 React Use Current — Reactive + Synchronous State in React
+
+React gives us two main primitives for storing state:
+
+### ❌ `useState`
+
+- Reactive (re-renders UI)
+- **Not synchronous** (updates batch, no immediate `.value`)
+- Forces immutability
+- Requires creating new references (`setState({ ... })`)
+
+### ❌ `useRef`
+
+- Synchronous (`ref.current = x`)
+- **Not reactive** (no re-renders when changed)
+- No tracking
+- No deep mutation detection
+
+### ✔️ `useCurrent` (built on **VRef**)
+
+- **Reactive** (mutations trigger re-render)
+- **Synchronous** (updated instantly like refs)
+- **Mutable** (no cloning, no setState)
+- **Deep tracking** (powered by VRef)
+- **Fast & GC-safe** thanks to VRef
+
+This hook gives React something it never had out-of-the-box:
+
+> **Direct mutation that triggers re-renders — immediately and safely.**
+
+---
+
+## 🔍 What Is React Use Current?
+
+`react-use-current` is a tiny hook built **on top of VRef** (`vref`).  
+It gives React the ability to:
+
+- Mutate values naturally (`user.age += 1`)
+- Track changes deeply
+- Trigger re-renders synchronously
+- Work with objects, arrays, nested data
+
+No need for `setState()`, shallow copying, or immutable patterns.
+
+```bash
+npm install react-use-current
+```
+
+---
+
+## 🧪 Quick Example
+
+```tsx
+import useCurrent from "react-use-current";
+
+export default function Counter() {
+  const count = useCurrent(0);
+
+  return (
+    <button onClick={() => (count.value += 1)}>
+      Count: {count.value}
+    </button>
+  );
+}
+```
+
+✔ updates instantly  
+✔ mutates directly  
+✔ re-renders correctly
+
+---
+
+## 🧠 Why Does This Hook Exist?
+
+React developers often hit these problems:
+
+### ❌ "I need immediate state updates"
+
+`useState` doesn't update until next render.  
+`useCurrent` updates **instantly**.
+
+### ❌ "I want to mutate state directly (nested objects)"
+
+`useState` forces immutability → slow & annoying.  
+`useCurrent` allows:
+
+```tsx
+user.address.city = "Phnom Penh";
+```
+
+### ❌ "useRef doesn't re-render when changed"
+
+`ref.current++` won't update UI.  
+`useCurrent` will.
+
+---
+
+## 🔎 Comparison Table
+
+| Feature | useState | useRef | useCurrent |
+|---------|----------|--------|------------|
+| Reactive | ✔️ | ❌ | ✔️ |
+| Synchronous | ❌ | ✔️ | ✔️ |
+| Deep mutation | ❌ | ✔️ | ✔️ |
+| Triggers re-render | ✔️ | ❌ | ✔️ |
+| Requires immutable updates | ✔️ | ❌ | ❌ |
+| Built on VRef | ❌ | ❌ | ✔️ |
+
+---
+
+## 🏗 How It Works (In Short)
+
+- `useCurrent()` internally wraps your initial value using **VRef**'s reactive system.
+- Any mutation (`obj.key = value`) triggers VRef's change event.
+- **useCurrent** listens to that event and updates an internal state token, which triggers a React re-render.
+- Works deeply — arrays, objects, nested structures.
+
+---
+
+## 🧩 Real Example — Objects, Deep Mutation, and Tracking
+
+```tsx
+import { useEffect, useMemo } from "react";
+import useCurrent, { track } from "react-use-current";
+
+export default function UserCard() {
+  const { value: user } = useCurrent({
+    name: "John",
+    age: 25,
+  });
+
+  // Run whenever user changes (deep)
+  useEffect(() => {
+    console.log("User mutated:", user);
+  }, [track(user)]);
+
+  // Memo recomputes when specific field changes
+  const isAdult = useMemo(() => user.age >= 18, [track(user.age)]);
+  // track for primitive is optional
+
+  return (
+    <div>
+      <p>{user.name} — {user.age}</p>
+      <button onClick={() => (user.age += 1)}>Increase Age</button>
+      <button onClick={() => (user.name = "Doe")}>
+        Change Name
+      </button>
+    </div>
+  );
+}
+```
+
+---
+
+## 🔧 Auto-Tracking Helpers
+
+### These come from `react-use-current` (optional but powerful)
+
+---
+
+## 🟦 `useApply`
+
+**A version of `useEffect` that auto-tracks dependencies.**
+
+```tsx
+import { useApply } from "react-use-current";
+
+useApply(() => {
+  console.log("User changed:", user);
+}, [user]);
+```
+
+Equivalent to:
+
+```tsx
+useEffect(() => {}, [track(user)]);
+```
+
+---
+
+## 🟧 `useCompute`
+
+**A version of `useMemo` that auto-tracks dependencies.**
+
+```tsx
+import { useCompute } from "react-use-current";
+
+const isAdult = useCompute(() => {
+  return user.age >= 18;
+}, [user.age]);
+```
+
+Equivalent to:
+
+```tsx
+useMemo(() => ..., [track(user.age)]);
+```
+
+---
+
+## 🧬 Understanding the `track()` Function
+
+`track()` converts reactive values into new value that React can detect in dependency arrays.
+
+```tsx
+const updatedAt = track(user);  // reactive object
+```
+
+Tracking is required for:
+
+- `useEffect`
+- `useMemo`
+- dependency change detection
+
+This mechanism is identical to VRef's change reporters — but adapted for React.
+
+---
+
+## 📦 Real Use Cases
+
+### ✔ Complex forms
+
+Directly mutate nested form fields without cloning.
+
+### ✔ Synchronous logic (counters, timers, scrolling)
+
+Get immediate updates—no batching.
+
+### ✔ Local reactive stores
+
+Like lightweight MobX-style state.
+
+### ✔ Avoid expensive cloning in large objects
+
+Mutate in place, but still reactive.
+
+---
+
+### 🎮 Live Playground
+<div align="center">
+**Play with `react-use-current`:**  
+👉 <a href="https://stackblitz.com/edit/react-use-current?file=src/App.tsx" target='_blank'>Open Live Playground</a>
+</div>
+
+---
+
+### 📦 Try It
+
+🟢 npm: [https://www.npmjs.com/package/react-use-current](https://www.npmjs.com/package/react-use-current)  
+🐙 GitHub: [https://github.com/JohnSoatra/react-use-current](https://github.com/JohnSoatra/react-use-current)  
+
+Reference:  
+🌍 Docs: [https://doc.soatra.com/vref](https://doc.soatra.com/vref) (VRef base)
+
+---
+
+💬 **What do you think?**  
+What do you think?  
+Would this help in forms, real-time state, animations, or nested data?
+
+---
+
+<div align="center">
+📬 **Contact me**
+👉 <a href="https://www.linkedin.com/in/soatra/" target="_blank">LinkedIn – John Soatra</a>
+</div>
